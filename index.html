@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CA Fast Track 24D</title>
+  <style>
+    :root {
+      --bg: #0b1325;
+      --card-bg: #111e38;
+      --card-border: #1d2d52;
+      --card-hover: #162646;
+      --primary: #0ea5e9;
+      --accent-green: #10b981;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --tag-day: #0284c7;
+      --tag-marks: #d97706;
+      --tag-badge: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 24px 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 980px;
+    }
+
+    /* Header & Progress */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+    }
+
+    .percentage {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-green);
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #1e2d4a;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #0ea5e9, #10b981);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* Section Category Header */
+    .section-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #f59e0b;
+      letter-spacing: 1px;
+      margin: 24px 0 14px;
+      text-transform: uppercase;
+    }
+
+    /* Tracker List & Cards */
+    .lecture-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
+    }
+
+    .card:hover {
+      background: var(--card-hover);
+      border-color: #2b4170;
+    }
+
+    .card.completed {
+      opacity: 0.75;
+      border-color: #1e3a5f;
+    }
+
+    .card.completed .card-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    /* Custom Checkbox */
+    .checkbox-wrap {
+      padding-top: 3px;
+    }
+
+    .checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #475569;
+      border-radius: 4px;
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      transition: all 0.2s ease;
+      background: transparent;
+    }
+
+    .checkbox:checked {
+      background-color: var(--accent-green);
+      border-color: var(--accent-green);
+    }
+
+    .checkbox:checked::before {
+      content: "";
+      width: 5px;
+      height: 9px;
+      border: solid #0b1325;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-bottom: 2px;
+    }
+
+    /* Card Content */
+    .card-body {
+      flex: 1;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .day-pill {
+      background-color: var(--tag-day);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .card-title {
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      line-height: 1.35;
+    }
+
+    .card-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--tag-badge);
+      color: #cbd5e1;
+    }
+
+    .badge-marks {
+      background: #78350f;
+      color: #fde68a;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>CA Fast Track 24D</h1>
+      <div class="percentage" id="percent-label">0%</div>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-text" id="stats-label">0 of 24 completed</div>
+
+    <div class="section-title">Corporate Accounting</div>
+    <div class="lecture-list" id="lecture-container"></div>
+  </div>
+
+  <script>
+    const lectureData = [
+      {
+        id: "day1",
+        day: "Day 1",
+        title: "Buyback of Securities (L1a, L1b, L2)",
+        subtitle: "Reasons for Buyback, Methods 1-3, ICAI SM L1, L2, L4",
+        duration: "3h 46m",
+        marks: "7-8 Marks"
+      },
+      {
+        id: "day2",
+        day: "Day 2",
+        title: "Buyback of Securities (L3a, L3b, L3c) + DPQ",
+        subtitle: "Max Permissible Buyback, Illu 5-6, Practical 9 & 11, MTP1 Q3",
+        duration: "2h 26m",
+        marks: null
+      },
+      {
+        id: "day3",
+        day: "Day 3",
+        title: "Amalgamation of Companies (L4a, L4b)",
+        subtitle: "Amalgamation Intro, Calculation & Discharge of PC, Nature & Accounting",
+        duration: "2h 13m",
+        marks: "14 Marks"
+      },
+      {
+        id: "day4",
+        day: "Day 4",
+        title: "Amalgamation of Companies (L5a, L5b, L5c, L5D)",
+        subtitle: "Illu 1, 2, 4, 5, 6, 8, Illu 10, Practice Problem 14 & 18",
+        duration: "3h 58m",
+        marks: null
+      },
+      {
+        id: "day5",
+        day: "Day 5",
+        title: "Amalgamation Wrap-up & Vendor Books (L5E, L6a, L6b) + DPQ + Test 1",
+        subtitle: "Intrinsic Value Method, Vendor Company Books Illu 10 & Practice 14",
+        duration: "2h 43m",
+        marks: null
+      },
+      {
+        id: "day6",
+        day: "Day 6",
+        title: "Internal Reconstruction (L7a, L7b, L8a, L8b) + DPQ",
+        subtitle: "Conceptual Explanation, Internal vs External Reconstruction, Illu 2, Practice Problem 10",
+        duration: "3h 45m",
+        marks: "10 Marks"
+      },
+      {
+        id: "day7",
+        day: "Day 7",
+        title: "AS-9: Revenue Recognition (L9a, L9b) + DPQ",
+        subtitle: "Entire Conceptual AS-9 & All ICAI SM Questions",
+        duration: "2h 46m",
+        marks: null
+      },
+      {
+        id: "day8",
+        day: "Day 8",
+        title: "AS-7: Construction Contracts (L10, L11a, L11b) + DPQ + Test 2",
+        subtitle: "Entire Conceptual Explanation, All Illustrations, Examples & Practice Problems",
+        duration: "3h 26m",
+        marks: null
+      },
+      {
+        id: "day9",
+        day: "Day 9",
+        title: "Consolidation of Financial Statements (L25)",
+        subtitle: "Conceptual Understanding, Basics & Foundation Illustrations",
+        duration: "3h 15m",
+        marks: "14 Marks"
+      },
+      {
+        id: "day10",
+        day: "Day 10",
+        title: "Consolidation (L26)",
+        subtitle: "Concept of Dividend, Illustrations 2, 3, 5, 7, 13 & Practice Problems",
+        duration: "3h 00m",
+        marks: null
+      },
+      {
+        id: "day11",
+        day: "Day 11",
+        title: "Consolidation (L27)",
+        subtitle: "Practice Problem 9, Mutual Debt, Upstream & Downstream Sales with Examples",
+        duration: "2h 00m",
+        marks: null
+      },
+      {
+        id: "day12",
+        day: "Day 12",
+        title: "Consolidation (L28) + DPQ",
+        subtitle: "Illustration 4, Bonus Issue by Sub, Practice Problem 10, Consolidated P&L Illu 15",
+        duration: "1h 10m",
+        marks: null
+      },
+      {
+        id: "day13_14",
+        day: "Day 13-14",
+        title: "AS-23 Investment in Associates & AS-27 Joint Ventures + DPQ + Test 3",
+        subtitle: "All Concepts & Questions across AS-23 and AS-27 (L29, L30-P1, L30-P2)",
+        duration: "6h 10m",
+        marks: null
+      },
+      {
+        id: "day15",
+        day: "Day 15",
+        title: "AS-20: Earnings Per Share + DPQ + Test 6",
+        subtitle: "Basic EPS, Diluted EPS, Amalgamation, Bonus & Rights (L31, 32, 33)",
+        duration: "5h 07m",
+        marks: null
+      },
+      {
+        id: "day16",
+        day: "Day 16",
+        title: "Financial Statements of Companies - L1",
+        subtitle: "Batch Orientation, Schedule III Statement Format, Revenue from Operations, WIP/FG Inventory",
+        duration: "3h 07m",
+        marks: "10 Marks"
+      },
+      {
+        id: "day17",
+        day: "Day 17",
+        title: "Financial Statements of Companies - L2 & L3 + DPQ",
+        subtitle: "Balance Sheet Illustrations, Notes to Accounts, Share Capital, Dividend Rules & Free Reserves",
+        duration: "2h 30m",
+        marks: null
+      },
+      {
+        id: "day18",
+        day: "Day 18",
+        title: "Cash Flow Statement (L1)",
+        subtitle: "Introduction (Direct vs Indirect Method), Operating Activities via Indirect Method",
+        duration: "2h 34m",
+        marks: "7-8 Marks"
+      },
+      {
+        id: "day19",
+        day: "Day 19",
+        title: "Cash Flow Statement (L2)",
+        subtitle: "Illustrations 6, 7, 8, 12, Investing & Financing Activities (Asset Sales, Interest Paid)",
+        duration: "2h 46m",
+        marks: null
+      },
+      {
+        id: "day20",
+        day: "Day 20",
+        title: "Cash Flow Statement (L3 & L4) + DPQ + Test 4",
+        subtitle: "NPAT from Balance Sheet, Reserves, Direct Method Practice Question",
+        duration: "3h 17m",
+        marks: null
+      },
+      {
+        id: "day21",
+        day: "Day 21",
+        title: "AS-2: Valuation of Inventories (L1 & L2) + DPQ",
+        subtitle: "Valuation, Cost & NRV, Inclusions/Exclusions, Practice Questions",
+        duration: "3h 22m",
+        marks: null
+      },
+      {
+        id: "day22",
+        day: "Day 22",
+        title: "AS-10: Property, Plant & Equipment (L1)",
+        subtitle: "Theory & Summary Chart, Cost of PPE including Self-Constructed Assets",
+        duration: "2h 44m",
+        marks: null
+      },
+      {
+        id: "day23",
+        day: "Day 23",
+        title: "AS-10 Practice & AS-16 Borrowing Costs (L1) + DPQ",
+        subtitle: "AS-10 Questions + AS-16 Qualifying Asset, Capitalization Criteria & Illu 2",
+        duration: "3h 24m",
+        marks: null
+      },
+      {
+        id: "day24a",
+        day: "Day 24",
+        title: "AS-16 Practice & AS-26 Intangible Assets (L1)",
+        subtitle: "AS-16 Practice (Q7, Q8, Q12) + AS-26 Definition, Recognition Criteria & Acquisition",
+        duration: "2h 18m",
+        marks: null
+      },
+      {
+        id: "day24b",
+        day: "Day 24",
+        title: "AS-26 Wrap-up + DPQ + Test 5",
+        subtitle: "Research & Development Phase, Amortisation, Impairment & Retirement",
+        duration: "0h 58m",
+        marks: null
+      }
+    ];
+
+    const storageKey = "ca_fasttrack_tracker_state";
+    let completedItems = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+    function renderList() {
+      const container = document.getElementById("lecture-container");
+      container.innerHTML = "";
+
+      lectureData.forEach(item => {
+        const isChecked = !!completedItems[item.id];
+        const card = document.createElement("div");
+        card.className = `card ${isChecked ? "completed" : ""}`;
+
+        card.innerHTML = `
+          <div class="checkbox-wrap">
+            <input type="checkbox" class="checkbox" id="${item.id}" ${isChecked ? "checked" : ""}>
+          </div>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="day-pill">${item.day}</span>
+              <span class="card-title">${item.title}</span>
+            </div>
+            <div class="card-subtitle">${item.subtitle}</div>
+            <div class="badges">
+              <span class="badge">⏱ ${item.duration}</span>
+              ${item.marks ? `<span class="badge badge-marks">★ ${item.marks}</span>` : ""}
+            </div>
+          </div>
+        `;
+
+        card.querySelector(".checkbox").addEventListener("change", (e) => {
+          completedItems[item.id] = e.target.checked;
+          localStorage.setItem(storageKey, JSON.stringify(completedItems));
+          renderList();
+        });
+
+        container.appendChild(card);
+      });
+
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = lectureData.length;
+      const done = Object.values(completedItems).filter(Boolean).length;
+      const percent = Math.round((done / total) * 100);
+
+      document.getElementById("progress-fill").style.width = `${percent}%`;
+      document.getElementById("percent-label").innerText = `${percent}%`;
+      document.getElementById("stats-label").innerText = `${done} of ${total} completed`;
+    }
+
+    renderList();
+  </script>
+</body>
+</html>
